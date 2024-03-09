@@ -7,7 +7,7 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/editor/:editorId" element={<EditorPage />} />
+        <Route path="/editor/:roomId" element={<EditorPage />} />
       </Routes>
     </BrowserRouter>
   );
