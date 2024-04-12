@@ -1,4 +1,3 @@
-import LeftSideBar from "@/components/LeftSideBar";
 import { clientType } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
@@ -6,6 +5,15 @@ import { initSocket } from "@/socket";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Socket } from "socket.io-client";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { Textarea } from "@/components/ui/textarea";
+import Navbar from "@/components/Navbar";
+import FileExplorer from "@/components/FileExplorer";
+import LeftSideBar from "@/components/LeftSideBar";
 
 export default function EditorPage() {
   const socketRef = useRef(null);
@@ -15,6 +23,37 @@ export default function EditorPage() {
   const { roomId } = useParams();
   const [clients, setClients] = useState<clientType[]>([]);
   const editorRef = useRef(null);
+
+  const [isOpenLeftSideBar, setIsOpenLeftSideBar] = useState<boolean>(false);
+
+  const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+
+  const languages = [
+    {
+      value: "javascript",
+      label: "Javascript",
+      snippet:
+        "console.log('Hello, world!');\nconsole.log('This is a simple JavaScript code snippet.');",
+    },
+    {
+      value: "c++",
+      label: "C++",
+      snippet:
+        '#include <iostream>\n\nint main() {\n    std::cout << "Hello, world!" << std::endl;\n    std::cout << "This is a simple C++ code snippet." << std::endl;\n    return 0;\n}',
+    },
+    {
+      value: "c",
+      label: "C",
+      snippet:
+        '#include <stdio.h>\n\nint main() {\n    printf("Hello, world!\\n");\n    printf("This is a simple C code snippet.\\n");\n    return 0;\n}',
+    },
+    {
+      value: "python",
+      label: "Python",
+      snippet:
+        "print('Hello, world!')\nprint('This is a simple Python code snippet.')",
+    },
+  ];
 
   function handleEditorDidMount(editor) {
     editorRef.current = editor;
@@ -108,19 +147,49 @@ export default function EditorPage() {
   }, []);
 
   return (
-    <div className="bg-slate-900 grid grid-rows-1 grid-cols-10 w-full h-screen text-slate-200">
-      <div className="bg-slate-950 col-span-1 h-screen">
-        <LeftSideBar clients={clients} roomId={roomId} />
-      </div>
-      <div className="col-span-9">
-        <Editor
-          theme="vs-dark"
-          language="javascript"
-          value={codeRef.current}
-          onMount={handleEditorDidMount}
-          onChange={handleEditorChange}
+    <div className="text-slate-200 h-screen w-screen">
+      <Navbar setIsOpenLeftSideBar={setIsOpenLeftSideBar} />
+
+      <main className="w-full min-h-[calc(100vh-64px)] ">
+        <LeftSideBar
+          clients={clients}
+          roomId={roomId || ""}
+          isOpen={isOpenLeftSideBar}
         />
-      </div>
-    </div>
+      </main>
+
+      {/* <div className="flex w-full h-[calc(100vh-64px)]"> */}
+      {/* <div className="w-full h-full flex-1"> */}
+      {/*   <ResizablePanelGroup direction="vertical" className=""> */}
+      {/*     <ResizablePanel defaultSize={65}> */}
+      {/*       <Editor */}
+      {/*         theme="vs-dark" */}
+      {/*         language={selectedLanguage} */}
+      {/*         value={codeRef.current} */}
+      {/*         onMount={handleEditorDidMount} */}
+      {/*         onChange={handleEditorChange} */}
+      {/*       /> */}
+      {/*     </ResizablePanel> */}
+      {/*     <ResizableHandle /> */}
+      {/*     <ResizablePanel defaultSize={35}> */}
+      {/*       <div className=""> */}
+      {/*         <ResizablePanelGroup direction="horizontal" className=""> */}
+      {/*           <ResizablePanel className="w-full h-screen" defaultSize={50}> */}
+      {/*             <Textarea className="h-screen bg-sky-800" /> */}
+      {/*           </ResizablePanel> */}
+      {/*           <ResizableHandle /> */}
+      {/*           <ResizablePanel defaultSize={50}> */}
+      {/*             <Textarea className="h-screen bg-sky-800" /> */}
+      {/*           </ResizablePanel> */}
+      {/*         </ResizablePanelGroup> */}
+      {/*       </div> */}
+      {/*     </ResizablePanel> */}
+      {/*   </ResizablePanelGroup> */}
+      {/* </div> */}
+      {/* <aside className="sticky right-0 mr-2 p-2 w-10 min-w-10 h-screen bg-zinc-950 flex flex-col"> */}
+      {/*   sdfsdf sdfsdf */}
+      {/* </aside> */}
+      {/* </div> */}
+    </div >
   );
 }
